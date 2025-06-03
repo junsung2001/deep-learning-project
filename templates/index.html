@@ -1,15 +1,70 @@
 <!DOCTYPE html>
 <html>
-  <body>
-    <h2>도로표지판 탐지기</h2>
-    <form method="POST" enctype="multipart/form-data">
-      <input type="file" name="image">
-      <input type="submit" value="탐지하기">
-    </form>
+<head>
+  <meta charset="UTF-8">
+  <title>도로표지판 탐지기</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f5f5;
+      text-align: center;
+      padding: 40px;
+    }
 
-{% if result_img %}
-<h3>탐지 결과:</h3>
-<img src="{{ url_for('static', filename=result_img) }}" width="600">
-{% endif %}
-  </body>
+    h2 {
+      color: #333;
+    }
+
+    form {
+      margin: 20px auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: inline-block;
+    }
+
+    input[type="file"] {
+      margin: 10px 0;
+    }
+
+    input[type="submit"] {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+
+    img {
+      margin-top: 20px;
+      border: 3px solid #444;
+      max-width: 90%;
+    }
+
+    h3 {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>도로표지판 탐지기</h2>
+  <form method="POST" enctype="multipart/form-data">
+    <input type="file" name="image" required><br>
+    <input type="submit" value="탐지하기">
+  </form>
+
+  {% if result_img %}
+    <h3> 탐지 결과:</h3>
+    <img src="{{ url_for('static', filename=result_img) }}" alt="탐지 결과 이미지">
+  {% endif %}
+
+</body>
 </html>

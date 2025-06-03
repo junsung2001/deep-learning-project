@@ -61,10 +61,20 @@
     <input type="submit" value="탐지하기">
   </form>
 
-  {% if result_img %}
-    <h3> 탐지 결과:</h3>
-    <img src="{{ url_for('static', filename=result_img) }}" alt="탐지 결과 이미지">
+ {% if result_img %}
+  <h3>탐지 결과:</h3>
+  <img src="{{ url_for('static', filename=result_img) }}" alt="탐지 결과 이미지">
+
+  {% if detected_classes %}
+    <h3>탐지된 표지판 종류:</h3>
+    <ul style="list-style: none; padding: 0;">
+      {% for cls in detected_classes %}
+        <li style="padding: 4px; background: #eee; margin: 4px auto; width: fit-content; border-radius: 5px;">{{ cls }}</li>
+      {% endfor %}
+    </ul>
   {% endif %}
+{% endif %}
+
 
 </body>
 </html>

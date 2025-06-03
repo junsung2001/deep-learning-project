@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h2>도로표지판 탐지기</h2>
+    <form method="POST" enctype="multipart/form-data">
+      <input type="file" name="image">
+      <input type="submit" value="탐지하기">
+    </form>
+
+{% if result_img %}
+<h3>탐지 결과:</h3>
+<img src="{{ url_for('static', filename=result_img) }}" width="600">
+{% endif %}
+  </body>
+</html>

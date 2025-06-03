@@ -4,7 +4,8 @@ import os
 from datetime import datetime
 
 # YOLO 모델 로딩
-model = YOLO("best.pt") # 훈련된 모델 경로
+model = YOLO("best.pt")
+class_names = model.names  # 클래스 ID → 이름 딕셔너리
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "static/uploads"
@@ -15,6 +16,8 @@ os.makedirs(RESULT_FOLDER, exist_ok=True)
 @app.route("/", methods=["GET", "POST"])
 def index():
     result_img = None
+    detected_classes = []
+
     if request.method == "POST":
         file = request.files["image"]
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -22,18 +25,20 @@ def index():
         upload_path = os.path.join(UPLOAD_FOLDER, filename)
         file.save(upload_path)
 
-        # YOLO 탐지 수행
+        # YOLO 탐지
         results = model.predict(source=upload_path, save=True, project=RESULT_FOLDER, name=timestamp, exist_ok=True)
 
-        # YOLO는 image0.jpg로 저장함 → 동적으로 찾아야 함
+        # 결과 이미지 경로 설정
         result_dir = os.path.join(RESULT_FOLDER, timestamp)
-        saved_files = os.listdir(result_dir)
-        saved_img_path = os.path.join(result_dir, saved_files[0])  # image0.jpg 등
-        result_img = os.path.relpath(saved_img_path, "static")     # "results/타임스탬프/image0.jpg"
-        result_img = result_img.replace("\\", "/")
-        print("🖼️ 이미지가 웹에 표시될 경로:", result_img)
-    
-    return render_template("index.html", result_img=result_img)
+        saved_img_path = os.path.join(result_dir, os.listdir(result_dir)[0])
+        result_img = os.path.relpath(saved_img_path, "static").replace("\\", "/")
+
+        # 탐지된 클래스 ID 추출 후 중복 제거
+        boxes = results[0].boxes
+        class_ids = boxes.cls.tolist()
+        detected_classes = sorted(set(class_names[int(cls)] for cls in class_ids))
+
+    return render_template("index.html", result_img=result_img, detected_classes=detected_classes)
 
     
 if __name__ == "__main__":
